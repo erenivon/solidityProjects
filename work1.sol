@@ -1,79 +1,119 @@
-// SPDX-License-Identifier: GPL-3.0
-pragma solidity ^0.8.0;
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.7;
+
 contract eren
 {
   //air1
    uint256 paidToken;
+   uint256 ethToken;
    uint256 selectedAir;
    uint256 degree;
-   string name;
   //air2
    uint256 paidToken2;
+   uint256 ethToken2;
    uint256 selectedAir2;
    uint256 degree2;
-   string name2;
    //air3
    uint256 paidToken3;
+    uint256 ethToken3;
    uint256 selectedAir3;
    uint256 degree3;
-   string name3;
    //air4
    uint256 paidToken4;
+    uint256 ethToken4;
    uint256 selectedAir4;
    uint256 degree4;
-   string name4;
-
+   //
+   //address wallet1 = 0x0000000000000000000000000000000000000000;
+   address wallet1;
+   address wallet2;
+   address wallet3;
+   address wallet4;
+   //
    ////////////MAIN////////////
 
-   function payAir(uint256 airconditioning, uint256 tokenValue, uint256 _degree) public returns(uint256)
+   function payAir(uint256 airconditioning, uint256 tokenValue, uint256 airDegree) public returns(uint256)
    {
     require(airconditioning>0&&airconditioning<5,"We only have 4 air conditioners :( Please choose between 1-4.");
     selectedAir = airconditioning;
     if (selectedAir==1) {
     require(paidToken<tokenValue,"Don't be afraid to take risks, increase the price :)");
     paidToken = tokenValue;
-    require(_degree>15&&_degree<31,"Values must be between 16-30.");
-    degree = _degree;
+    wallet1 = msg.sender;
+    require(airDegree>15&&airDegree<31,"Values must be between 16-30.");
+    degree = airDegree;
     return tokenValue;
     }
     if (selectedAir==2) {
     require(paidToken2<tokenValue,"Don't be afraid to take risks, increase the price :)");
     paidToken2 = tokenValue;
-    require(_degree>15&&_degree<31,"Values must be between 16-30.");
-    degree2 = _degree;
+    wallet2 = msg.sender;
+    require(airDegree>15&&airDegree<31,"Values must be between 16-30.");
+    degree2 = airDegree;
     return tokenValue;
     }
      if (selectedAir==3) {
     require(paidToken2<tokenValue,"Don't be afraid to take risks, increase the price :)");
     paidToken3 = tokenValue;
-    require(_degree>15&&_degree<31,"Values must be between 16-30.");
-    degree3 = _degree;
+    wallet3 = msg.sender;
+    require(airDegree>15&&airDegree<31,"Values must be between 16-30.");
+    degree3 = airDegree;
     return tokenValue;
     }
      if (selectedAir==4) {
     require(paidToken4<tokenValue,"Don't be afraid to take risks, increase the price :)");
     paidToken4 = tokenValue;
-    require(_degree>15&&_degree<31,"Values must be between 16-30.");
-    degree4 = _degree;
+    wallet4 = msg.sender;
+    require(airDegree>15&&airDegree<31,"Values must be between 16-30.");
+    degree4 = airDegree;
     return tokenValue;
     }
     return airconditioning;
    }
-
-   function air1() public view returns(uint256,uint256,string memory)
-    {
-       return (paidToken,degree,name);
+   function updateAir(uint256 airconditioning, uint256 airDegree) public returns(uint256)
+   {
+    require(airconditioning>0&&airconditioning<5,"We only have 4 air conditioners :( Please choose between 1-4.");
+    selectedAir = airconditioning;
+    require(wallet1==msg.sender,"The owner of the air conditioner does not appear here");
+    if (selectedAir==1&&wallet1==msg.sender) {
+    require(airDegree>15&&airDegree<31,"Values must be between 16-30.");
+    degree = airDegree;
+    return degree;
     }
-    function air2() public view returns(uint256,uint256)
-    {
-       return (paidToken2,degree2);
+    require(wallet2==msg.sender,"The owner of the air conditioner does not appear here");
+    if (selectedAir==2&&wallet2==msg.sender) {
+    require(airDegree>15&&airDegree<31,"Values must be between 16-30.");
+    degree2 = airDegree;
+    return degree;
     }
-     function air3() public view returns(uint256,uint256)
-    {
-       return (paidToken3,degree3);
+    require(wallet3==msg.sender,"The owner of the air conditioner does not appear here");
+     if (selectedAir==3&&wallet3==msg.sender) {
+    require(airDegree>15&&airDegree<31,"Values must be between 16-30.");
+    degree3 = airDegree;
+    return degree;
     }
-     function air4() public view returns(uint256,uint256)
+    require(wallet4==msg.sender,"The owner of the air conditioner does not appear here");
+     if (selectedAir==4&&wallet4==msg.sender) {
+    require(airDegree>15&&airDegree<31,"Values must be between 16-30.");
+    degree4 = airDegree;
+    return degree;
+    }
+    return airconditioning;
+   }
+   function air1() public view returns(uint256,uint256,address)
     {
-       return (paidToken4,degree4);
+       return (paidToken,degree,wallet1);
+    }
+    function air2() public view returns(uint256,uint256,address)
+    {
+       return (paidToken2,degree2,wallet2);
+    }
+     function air3() public view returns(uint256,uint256,address)
+    {
+       return (paidToken3,degree3,wallet3);
+    }
+     function air4() public view returns(uint256,uint256,address)
+    {
+       return (paidToken4,degree4,wallet4);
     }
 }
