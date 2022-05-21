@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.7;
 interface AirConditioings {
-    function AC_Degree(uint256 selectedAC) external view returns (uint256);
-    function AC_Admin(uint256 selectedAC) external view returns (address);
-    function AC_TokenValue(uint256 selectedAC) external view returns (uint256);
+    function getDegree(uint256 selectedAC) external view returns (uint256);
+    function getAdmin(uint256 selectedAC) external view returns (address);
+    function getTokenValue(uint256 selectedAC) external view returns (uint256);
     function setAdmin(uint256 selectedAC, uint256 tokenValue) external;
     function setDegree(uint256 selectedAC, uint256 _degree) external;
 }
@@ -12,13 +12,13 @@ contract SetAirConditioing is AirConditioings {
     uint256 [4] ac; 
     uint256 [4] ac_degree; 
     address [4] wallet;
-    function AC_TokenValue(uint256 selectedAC) public view override returns (uint256) {
+    function getTokenValue(uint256 selectedAC) public view override returns (uint256) {
         return paidToken[selectedAC];
     }
-    function AC_Admin(uint256 selectedAC) public view override returns (address) {
+    function getAdmin(uint256 selectedAC) public view override returns (address) {
         return wallet[selectedAC];
     }
-    function AC_Degree(uint256 selectedAC) public view override returns (uint256) {
+    function getDegree(uint256 selectedAC) public view override returns (uint256) {
         return ac_degree[selectedAC];
     }
    function setAdmin(uint256 selectedAC, uint256 tokenValue) public override {
