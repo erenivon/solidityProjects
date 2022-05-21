@@ -8,11 +8,9 @@ interface AirConditioings {
     function setDegree(uint256 selectedAC, uint256 _degree) external;
 }
 contract SetAirConditioing is AirConditioings {
-    address public last;
+    address public last; 
     event Last(address owner);
-    uint256 [4] paidToken; 
-    uint256 [4] ac_degree; 
-    address [4] wallet;
+    uint256 [4] paidToken; uint256 [4] ac_degree; address [4] wallet;
     function getTokenValue(uint256 selectedAC) public view override returns (uint256) {
         return paidToken[selectedAC];
     }
