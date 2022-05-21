@@ -1,36 +1,32 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.7;
 interface AirConditioings {
-    function getDegree(uint256 selectedAC) external view returns (uint256);
-    function getAdmin(uint256 selectedAC) external view returns (address);
-    function getTokenValue(uint256 selectedAC) external view returns (uint256);
-    function setAdmin(uint256 selectedAC, uint256 tokenValue) external;
-    function setDegree(uint256 selectedAC, uint256 _degree) external;
+    function getAcDetail(uint256 acId) external view returns (address,uint256,uint256);
+    function setAdmin(uint256 acId, uint256 tokenValue) external;
+    function setDegree(uint256 acId, uint256 _degree) external;
+    event AC_Owner_Changed(address newOwner, uint256 ac_changed);
+    event AC_Degree_Changed(uint256 ac_changed,uint256 newDegree);
 }
 contract SetAirConditioing is AirConditioings {
-    address public lastPayyer; 
-    event Last(address owner);
     uint256 [4] paidToken; uint256 [4] ac_degree; address [4] wallet;
-    function getTokenValue(uint256 selectedAC) public view override returns (uint256) {
-        return paidToken[selectedAC-1];
+
+    function getAcDetail(uint256 acId) public view override returns (address,uint256,uint256) {
+        return (wallet[acId],paidToken[acId],ac_degree[acId]);
     }
-    function getAdmin(uint256 selectedAC) public view override returns (address) {
-        return wallet[selectedAC-1];
+
+    function setAdmin(uint256 acId, uint256 tokenValue) public override {
+        require(acId<4,"We only have 4 air conditioners :( Please choose between 1-4.");
+        require(paidToken[acId]<tokenValue,"Don't be afraid to take risks, increase the price :)");
+        wallet[acId]= msg.sender;
+        paidToken[acId] = tokenValue;
+        emit AC_Owner_Changed(msg.sender,acId);
     }
-    function getDegree(uint256 selectedAC) public view override returns (uint256) {
-        return ac_degree[selectedAC-1];
-    }
-   function setAdmin(uint256 selectedAC, uint256 tokenValue) public override {
-       require(selectedAC>0&&selectedAC<5,"We only have 4 air conditioners :( Please choose between 1-4.");
-        require(paidToken[selectedAC-1]<tokenValue,"Don't be afraid to take risks, increase the price :)");
-        paidToken[selectedAC-1]=tokenValue; wallet[selectedAC-1] = msg.sender;
-        emit Last(msg.sender); 
-        lastPayyer = wallet[selectedAC-1];
-   }
-   function setDegree(uint256 selectedAC, uint256 _degree) public override {
-        require(selectedAC>0&&selectedAC<5,"We only have 4 air conditioners :( Please choose between 1-4.");
-        require(wallet[selectedAC-1] == msg.sender, "The owner of the air conditioner does not appear here.");
+
+    function setDegree(uint256 acId, uint256 _degree) public override {
+        require(acId<4,"We only have 4 air conditioners :( Please choose between 1-4.");
+        require(wallet[acId] == msg.sender, "The owner of the air conditioner does not appear here.");
         require(_degree>15&&_degree<33,"Values must be between 16-30.");
-        ac_degree[selectedAC-1]=_degree;
-   }
+        ac_degree[acId]=_degree;
+        emit AC_Degree_Changed(acId,ac_degree[acId]);
+    }
  }
