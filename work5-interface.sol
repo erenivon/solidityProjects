@@ -8,8 +8,9 @@ interface AirConditioings {
     function setDegree(uint256 selectedAC, uint256 _degree) external;
 }
 contract SetAirConditioing is AirConditioings {
+    address public last;
+    event Last(address owner);
     uint256 [4] paidToken; 
-    uint256 [4] ac; 
     uint256 [4] ac_degree; 
     address [4] wallet;
     function getTokenValue(uint256 selectedAC) public view override returns (uint256) {
@@ -25,6 +26,8 @@ contract SetAirConditioing is AirConditioings {
        require(selectedAC>0&&selectedAC<5,"We only have 4 air conditioners :( Please choose between 1-4.");
         require(paidToken[selectedAC]<tokenValue,"Don't be afraid to take risks, increase the price :)");
         paidToken[selectedAC]=tokenValue; wallet[selectedAC] = msg.sender;
+        emit Last(msg.sender); 
+        last = wallet[selectedAC];
    }
    function setDegree(uint256 selectedAC, uint256 _degree) public override {
         require(selectedAC>0&&selectedAC<5,"We only have 4 air conditioners :( Please choose between 1-4.");
@@ -32,5 +35,4 @@ contract SetAirConditioing is AirConditioings {
         require(_degree>15&&_degree<33,"Values must be between 16-30.");
         ac_degree[selectedAC]=_degree;
    }
-  
  }
