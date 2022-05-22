@@ -19,9 +19,9 @@ interface IERC20 {
 
 contract ERC20Basic is IERC20 {
 
-    string public constant name = "ERC20Basic";
-    string public constant symbol = "ERC";
-    uint8 public constant decimals = 18;
+    string public constant name = "Bixos Air Control";
+    string public constant symbol = "BSXAIR";
+    uint8 public constant decimals = 6;
 
 
     mapping(address => uint256) balances;
