@@ -2,10 +2,8 @@
 
 pragma solidity ^0.8.7;
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
-
-//token olusturma islemleri burada yapilmakta token yonetimi icin ayri bir conractta calismaktadir..!
 contract CreatedToken is ERC20 {
-    constructor(uint256 initialSupply) ERC20("Bixos Air Control", "BSXAIR") {
+    constructor(uint256 initialSupply) ERC20("Bixoe Air Conditioing", "BSXAIR") {
         _mint(_msgSender(), initialSupply);
     }
 
