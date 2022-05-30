@@ -29,5 +29,5 @@ describe("SetAirConditioning", function () {
     for(i = 0; i < 4; i++) {
     const test = await expect(contract.setDegree(i,20));
 }
-});
+  });
 });
