@@ -5,11 +5,14 @@ require("@nomiclabs/hardhat-waffle");
 
 describe("SetAirConditioning", function () {
   let contract;
+  let owner;
 
   beforeEach(async function () {
     const SetAirConditioning = await ethers.getContractFactory("SetAirConditioning");
     const bixos = await SetAirConditioning.deploy("Life's Good");
     contract = await bixos.deployed();
+
+    [owner] = await ethers.getSigners();
   });
   it("Trying 4 commands via 'setAdmin' function", async function () {
     var i;
@@ -22,4 +25,9 @@ describe("SetAirConditioning", function () {
         const test = await expect(contract.getAcDetail(i));
     }
   });
+  it("Trying 4 commands via 'setDegree' function'", async function () {
+    for(i = 0; i < 4; i++) {
+    const test = await expect(contract.setDegree(i,20));
+}
+});
 });
