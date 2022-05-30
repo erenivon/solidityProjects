@@ -18,17 +18,17 @@ describe("SetAirConditioning", function () {
   it("Trying 4 commands via 'setAdmin' function", async function () {
     var i;
     for(i = 0; i < 4; i++) {
-        const test = await expect(contract.setAdmin(i, 100));
+        const test = expect(await contract.setAdmin(i, 100));
     }
   });
   it("Trying 4 commands via 'getAcDetail' function'", async function () {
         for(i = 0; i < 4; i++) {
-        const test = await expect(contract.getAcDetail(i));
+        const test = expect(await contract.getAcDetail(i));
     }
   });
   it("Trying 4 commands via 'setDegree' function'", async function () {
     for(i = 0; i < 4; i++) { 
-    const test = await expect(contract.setDegree(i,20));
+    const test = expect(await contract.setDegree(i,20));
     }
   });
 });
