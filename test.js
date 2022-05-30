@@ -5,14 +5,11 @@ require("@nomiclabs/hardhat-waffle");
 
 describe("SetAirConditioning", function () {
   let contract;
-  let owner;
 
   beforeEach(async function () {
     const SetAirConditioning = await ethers.getContractFactory("SetAirConditioning");
     const bixos = await SetAirConditioning.deploy("Life's Good");
     contract = await bixos.deployed();
-
-    [owner] = await ethers.getSigners();
   });
   it("Trying 4 commands via 'setAdmin' function", async function () {
     var i;
