@@ -25,9 +25,4 @@ describe("SetAirConditioning", function () {
         const test = await expect(contract.getAcDetail(i));
     }
   });
-  it("Trying 4 commands via 'setDegree' function'", async function () {
-    for(i = 0; i < 4; i++) {
-    const test = await expect(contract.setDegree(i,20));
-}
-  });
 });
