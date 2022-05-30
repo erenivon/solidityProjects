@@ -3,7 +3,7 @@ const { Wallet } = require("ethers");
 const { ethers } = require("hardhat");
 
 require("@nomiclabs/hardhat-waffle");
-
+import("contracts/BixosAirConditionings.sol");
 describe("SetAirConditioning", function () {
   let contract;
   let owner;
@@ -24,11 +24,6 @@ describe("SetAirConditioning", function () {
   it("Trying 4 commands via 'getAcDetail' function'", async function () {
         for(i = 0; i < 4; i++) {
         const test = expect(await contract.getAcDetail(i));
-    }
-  });
-  it("Trying 4 commands via 'setDegree' function'", async function () {
-    for(i = 0; i < 4; i++) { 
-    const test = expect(await contract.setDegree(i,20));
     }
   });
 });
