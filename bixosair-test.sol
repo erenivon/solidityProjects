@@ -28,8 +28,4 @@ contract SetAirConditioning {
         require(_degree>15&&_degree<33,"Values must be between 16-30.");
         acDegree[acId]=_degree;
     }
-
-    function sum(uint256 a, uint256 b) public pure returns (uint256) {
-        return a + b;
-    }
  }
