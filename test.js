@@ -14,10 +14,6 @@ describe("SetAirConditioning", function () {
 
     [owner] = await ethers.getSigners();
   });
-  it("Should value = 10", async function () {
-    const test = await contract.sum(5, 5);
-    expect(test).to.equal(10);
-  });
   it("Trying 4 commands via 'setAdmin' function", async function () {
     var i;
     for(i = 0; i < 4; i++) {
