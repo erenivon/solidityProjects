@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.7;
-
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 interface AirConditioings {
     function getAcDetail(uint256 acId) external view returns (address,uint256,uint256);
     function setAdmin(uint256 acId, uint256 tokenValue) external;
@@ -13,15 +13,25 @@ interface AirConditioings {
 }
 
 contract SetAirConditioing is AirConditioings {
-    uint256 [4] tokenAmount; uint256 [4] acDegree; address [4] wallet;
+    IERC20 private _ubxsToken; 
 
+    constructor(address tokenAddress) {
+        _ubxsToken = IERC20(tokenAddress); 
+    }
+    uint256 [4] tokenAmount; uint256 [4] acDegree; address [4] wallet;
+     
     function getAcDetail(uint256 acId) public view override returns (address,uint256,uint256) {
         return (wallet[acId],tokenAmount[acId],acDegree[acId]);
     }
 
-    function setAdmin(uint256 acId, uint256 tokenValue) public override {
-        require(acId<4,"We only have 4 air conditioners :( Please choose between 0-3.");
+     function setAdmin(uint256 acId, uint256 tokenValue) public override {
+
+        require(acId<tokenAmount.length,"out of bounds");
         require(tokenAmount[acId]<tokenValue,"Don't be afraid to take risks, increase the price :)");
+        require( 
+            _ubxsToken.transferFrom(msg.sender, address(this), tokenValue),
+            "Transaction Error"
+        );
         wallet[acId]= msg.sender;
         tokenAmount[acId] = tokenValue;
         emit acOwnerChanged(msg.sender,acId);
