@@ -20,7 +20,7 @@ contract SetAirConditioing is AirConditioings {
     }
 
     function setAdmin(uint256 acId, uint256 tokenValue) public override {
-        require(acId<4,"We only have 4 air conditioners :( Please choose between 1-4.");
+        require(acId<4,"We only have 4 air conditioners :( Please choose between 0-3.");
         require(tokenAmount[acId]<tokenValue,"Don't be afraid to take risks, increase the price :)");
         wallet[acId]= msg.sender;
         tokenAmount[acId] = tokenValue;
@@ -28,7 +28,7 @@ contract SetAirConditioing is AirConditioings {
     }
 
     function setDegree(uint256 acId, uint256 _degree) public override {
-        require(acId<4,"We only have 4 air conditioners :( Please choose between 1-4.");
+        require(acId<4,"We only have 4 air conditioners :( Please choose between 0-3.");
         require(wallet[acId] == msg.sender, "The owner of the air conditioner does not appear here.");
         require(_degree>15&&_degree<33,"Values must be between 16-30.");
         acDegree[acId]=_degree;
