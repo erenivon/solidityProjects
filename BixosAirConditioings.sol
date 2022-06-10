@@ -30,7 +30,7 @@ contract SetAirConditioing is AirConditioings {
     function setDegree(uint256 acId, uint256 _degree) public override {
         require(acId<4,"We only have 4 air conditioners :( Please choose between 0-3.");
         require(wallet[acId] == msg.sender, "The owner of the air conditioner does not appear here.");
-        require(_degree>15&&_degree<33,"Values must be between 16-30.");
+        require(_degree>15&&_degree<33,"Values must be between 16-32.");
         acDegree[acId]=_degree;
         emit acDegreeChanged(acId,acDegree[acId]);
     }
