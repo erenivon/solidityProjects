@@ -3,11 +3,9 @@ pragma solidity ^0.8.7;
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 contract theDress{
      uint256 STEP = 5 minutes;
-    // IERC20 private dressToken;
      uint256 public immutable_start_time;
 
      constructor(/*address tokenAddress*/) {
-        //  dressToken = IERC20(tokenAddress);
          immutable_start_time = block.timestamp;
          PRICE = 1 ether/1000;
      }
@@ -18,6 +16,7 @@ contract theDress{
         bool votedBlue;
         bool votedGold;
     }
+    
     struct Owner {
         bool blueWon;
         bool goldWon;
@@ -37,7 +36,8 @@ contract theDress{
     address _chairperson = 0x5B38Da6a701c568545dCfcB03FcB875f56beddC4;
 
     mapping(address=>uint256) public addressToAmountFunded;
-     function voteBlue() public payable {
+    
+    function voteBlue() public payable {
          addressToAmountFunded[msg.sender] + msg.value;
          Voter storage sender = _voters[msg.sender];
          totalBlue++;
@@ -45,31 +45,14 @@ contract theDress{
          TotalPaidToken +=PRICE;
 
     }
+    
     function voteGold() public {
          Voter storage sender = _voters[msg.sender];
          totalGold++;
          sender.votedGold=true;
          TotalPaidToken +=PRICE;
     }
-    // function voteDress(uint256 selectDress) public {
-    //     Voter storage sender = _voters[msg.sender];
-    //     require(selectDress<2,"We only have 2 dresses :( Please choose between 0-1.");
-    //     require(!sender.voted, "You Already voted.");
-    //     require( 
-    //         dressToken.transferFrom(msg.sender, address(this), PRICE),
-    //          "Transaction Error"
-    //     );
-    //     if(selectDress==0){
-    //         totalBlue++;
-    //     }
-    //     else{
-    //         totalGold++;
-    //     }
-    //     sender.voted = true;
-    //     sender.vote = selectDress;
-    //     voters[selectDress]++;
-    //     TotalPaidToken +=PRICE;
-    // }
+    
     function winner_share(uint256 whichColor) public {
         Owner storage chairperson = _owner[msg.sender];
         require(msg.sender==_chairperson,"U are not owner.");
@@ -82,6 +65,7 @@ contract theDress{
             chairperson.goldWon=false;
         }
     }
+    
     function withdraw() public {
         Owner storage chairperson = _owner[msg.sender];
         Voter storage sender = _voters[msg.sender];
