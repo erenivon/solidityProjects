@@ -2,22 +2,20 @@
 pragma solidity ^0.8.7;
 import "@openzeppelin/contracts/access/Ownable.sol";
 contract theDress is Ownable {
-    mapping(address => uint256) public userGold;
-    mapping(address => uint256) public userBlue;
     uint256 public constant PRICE = 1 ether / 100;
     uint256 public constant STEP = 5 minutes;
-    uint256 public ownerShare;
-    uint256 public winnerShare;
-    uint256 public constant OWNER_PERCENTAGE = 40;
-    uint256 private goldOrBlue = 2;
     uint256 private constant GOLD = 0;
     uint256 private constant BLUE = 1;
+    uint256 public constant OWNER_PERCENTAGE = 40;
+    uint256 public ownerShare;
+    uint256 public winnerShare;
+    uint256 private goldOrBlue = 2;
     uint256 public totalGold;
     uint256 public totalBlue;
+    uint256 public immutable start_time;
     uint256 timeDifference;
     uint256 total_ownerPercentage;
-    uint256 public immutable start_time;
-    address _chairperson = 0x5B38Da6a701c568545dCfcB03FcB875f56beddC4;
+    address Owner;
 
     error InsufficientFunds();
     error InvalidWinnerID();
@@ -25,20 +23,22 @@ contract theDress is Ownable {
 
     constructor() {
         start_time = block.timestamp;
+        Owner = msg.sender;
     }
 
      struct Voter {
-        uint vote;
+        uint gold;
+        uint blue;
         bool votedBlue;
         bool votedGold;
     }
     mapping(address => Voter) private _voters;
 
-    struct Owner {
-        bool blueWon;
-        bool goldWon;
+    struct winnerDress {
+        bool Gold;
+        bool Blue;
     }
-    mapping(address => Owner) private _owner;
+    mapping(address => winnerDress) private user;
 
     function calculatePrice() internal view returns (uint256) {
         uint256 timeDif = block.timestamp - start_time;
@@ -51,7 +51,7 @@ contract theDress is Ownable {
         if (msg.value < fullPrice) revert InsufficientFunds();
         Voter storage sender = _voters[msg.sender];
         totalBlue += quantity;
-        userBlue[msg.sender] += quantity;
+        sender.blue+=quantity;
         sender.votedBlue=true;
         updateShares();
     }
@@ -65,23 +65,21 @@ contract theDress is Ownable {
         uint256 enterPrice = calculatePrice();
         uint256 fullPrice = quantity * enterPrice;
         if (msg.value < fullPrice) revert InsufficientFunds();
-        userGold[msg.sender] += quantity;
         totalGold += quantity;
         Voter storage sender = _voters[msg.sender];
+        sender.gold+=quantity;
         sender.votedGold=true;
         updateShares();
     }
 
-    function winner(uint256 whichColor) public {
-        Owner storage chairperson = _owner[msg.sender];
-        require(msg.sender==_chairperson,"U are not owner.");
-        if(whichColor==1){
-            chairperson.blueWon=false;
-            chairperson.goldWon=true;
+    function winner(uint256 winnerId) public {
+        winnerDress storage whichColor = user[msg.sender];
+        require(msg.sender==Owner,"U are not owner.");
+        if(winnerId==0){
+          whichColor.Blue=true;
         }
         else{
-            chairperson.blueWon=true;
-            chairperson.goldWon=false;
+          whichColor.Gold=true;
         }
     }
 
@@ -94,17 +92,17 @@ contract theDress is Ownable {
 
     function winnerWithdraw() external {
         uint256 withdrawAmount;
-        Owner storage chairperson = _owner[msg.sender];
-        require(!chairperson.blueWon||!chairperson.goldWon,"Any dresses has not win!");
+        winnerDress storage whichColor = user[msg.sender];
+        require(whichColor.Blue||whichColor.Gold,"Any dresses has not win!");
         Voter storage sender = _voters[msg.sender];
-        require(!sender.votedGold||!sender.votedBlue,"You didn't vote for the winning dress!");
-        if(chairperson.blueWon){
-            withdrawAmount = (winnerShare * userBlue[msg.sender]) / totalGold;
-            userBlue[msg.sender] = 0;
+        require(sender.votedGold||sender.votedBlue,"You didn't vote for the winning dress!");
+        if(whichColor.Blue){
+            withdrawAmount = (winnerShare * sender.blue) / totalGold;
+           sender.blue = 0;
         }
-        if(chairperson.goldWon){
-            withdrawAmount = (winnerShare * userGold[msg.sender]) / totalGold;
-            userGold[msg.sender] = 0;
+        if(whichColor.Gold){
+            withdrawAmount = (winnerShare * sender.gold) / totalGold;
+            sender.gold = 0;
         }
          (bool isSuccess, ) = payable(msg.sender).call{ value: withdrawAmount }(
             ""
