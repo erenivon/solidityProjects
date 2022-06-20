@@ -74,7 +74,8 @@ contract theDress is Ownable {
             withdrawAmount = (winnerShare * userGold[msg.sender]) / totalGold;
 
             userGold[msg.sender] = 0;
-        } else {
+        } 
+        else {
             withdrawAmount = (winnerShare * userBlue[msg.sender]) / totalBlue;
 
             userBlue[msg.sender] = 0;
