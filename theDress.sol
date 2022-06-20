@@ -9,9 +9,9 @@ contract theDress is Ownable {
     uint256 public constant OWNER_PERCENTAGE = 40;
     uint256 public ownerShare;
     uint256 public winnerShare;
-    uint256 private goldOrBlue = 2;
     uint256 public totalGold;
     uint256 public totalBlue;
+    uint256 private goldOrBlue = 2;
     uint256 public immutable start_time;
     uint256 timeDifference;
     uint256 total_ownerPercentage;
@@ -29,16 +29,9 @@ contract theDress is Ownable {
      struct Voter {
         uint gold;
         uint blue;
-        bool votedBlue;
-        bool votedGold;
     }
-    mapping(address => Voter) private _voters;
 
-    struct winnerDress {
-        bool Gold;
-        bool Blue;
-    }
-    mapping(address => winnerDress) private user;
+    mapping(address => Voter) public _voters;
 
     function calculatePrice() internal view returns (uint256) {
         uint256 timeDif = block.timestamp - start_time;
@@ -52,7 +45,6 @@ contract theDress is Ownable {
         Voter storage sender = _voters[msg.sender];
         totalBlue += quantity;
         sender.blue+=quantity;
-        sender.votedBlue=true;
         updateShares();
     }
 
@@ -68,19 +60,12 @@ contract theDress is Ownable {
         totalGold += quantity;
         Voter storage sender = _voters[msg.sender];
         sender.gold+=quantity;
-        sender.votedGold=true;
         updateShares();
     }
 
     function winner(uint256 winnerId) public {
-        winnerDress storage whichColor = user[msg.sender];
         require(msg.sender==Owner,"U are not owner.");
-        if(winnerId==0){
-          whichColor.Blue=true;
-        }
-        else{
-          whichColor.Gold=true;
-        }
+        goldOrBlue = winnerId;
     }
 
     function ownerWithdraw() external onlyOwner {
@@ -92,17 +77,14 @@ contract theDress is Ownable {
 
     function winnerWithdraw() external {
         uint256 withdrawAmount;
-        winnerDress storage whichColor = user[msg.sender];
-        require(whichColor.Blue||whichColor.Gold,"Any dresses has not win!");
+        require(goldOrBlue!=2,"Any dresses has not win!");
         Voter storage sender = _voters[msg.sender];
-        require(sender.votedGold||sender.votedBlue,"You didn't vote for the winning dress!");
-        if(whichColor.Blue){
-            withdrawAmount = (winnerShare * sender.blue) / totalGold;
-           sender.blue = 0;
-        }
-        if(whichColor.Gold){
+        if (goldOrBlue == 0) {
             withdrawAmount = (winnerShare * sender.gold) / totalGold;
             sender.gold = 0;
+        } else {
+            withdrawAmount = (winnerShare * sender.blue) / totalBlue;
+            sender.blue = 0;
         }
          (bool isSuccess, ) = payable(msg.sender).call{ value: withdrawAmount }(
             ""
