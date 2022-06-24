@@ -11,9 +11,9 @@ contract setBlame is Blame {
     uint256 constant PRICE = 10;
     IERC20 private blameCoin; 
 
-    //   constructor(address payable tokenAddress) {
-    //       blameCoin = IERC20(tokenAddress); 
-    //   }
+    constructor(address payable tokenAddress) {
+        blameCoin = IERC20(tokenAddress); 
+    }
     string [] descBlame;
     uint256 uniqueId = 0;
     uint256 [] boosts;
