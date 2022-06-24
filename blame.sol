@@ -5,6 +5,7 @@ interface Blame {
     function getBlameDetail(uint256 _id) external view returns (string memory, uint256);
     function createBlame(string memory your_blame) external;
     function deleteBlame(uint256 blameId) external;
+    function boostBlame(uint256 _blameId, uint256 boostQuantity) external;
 }
 
 contract setBlame is Blame {
@@ -39,7 +40,7 @@ contract setBlame is Blame {
         );
         delete descBlame[blameId];
     }
-    function boostBlame(uint256 _blameId, uint256 boostQuantity) public {
+    function boostBlame(uint256 _blameId, uint256 boostQuantity) public override {
         require(_blameId<=uniqueId,"There is no blame for the id you specified.");
         require( 
             blameCoin.transferFrom(msg.sender, address(this), PRICE + 5),
