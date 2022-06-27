@@ -1,14 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.7;
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-interface Blame {
-    function getBlameDetail(uint256 _id) external view returns (string memory, string memory, uint256);
-    function createBlame(string memory userName, string memory yourBlame) external;
-    function deleteBlame(uint256 blameId) external;
-    function boostBlame(uint256 _blameId, uint256 boostQuantity) external;
-}
 
-contract theBlame is Blame {
+contract theBlame {
     uint256 constant PRICE = 10000000;
     IERC20 private blameCoin; 
 
@@ -16,15 +10,17 @@ contract theBlame is Blame {
         blameCoin = IERC20(tokenAddress); 
     }
     string [] descBlame;
-    string[] users;
-    uint256 uniqueId = 0;
+    string [] users;
+    uint256 public blameCount = 0;
+    uint256 public arrayLength;
     uint256 [] boosts;
+    uint256 [] blameId;
      
-    function getBlameDetail(uint256 _id) public view override returns (string memory, string memory, uint256) {
-        return (users[_id],descBlame[_id], boosts[_id]);
+    function getBlameDetail(uint256 _id) public view returns (string memory, string memory, uint256, uint256) {
+        return (users[_id],descBlame[_id], boosts[_id], blameId[_id]);
     }
 
-     function createBlame(string memory userName, string memory yourBlame) public override {
+    function createBlame(string memory userName, string memory yourBlame) public {
         require( 
             blameCoin.transferFrom(msg.sender, address(this), PRICE),
             "Transaction Error"
@@ -32,24 +28,29 @@ contract theBlame is Blame {
         descBlame.push(yourBlame);
         users.push(userName);
         boosts.push(0);
-        uniqueId++;
+        blameId.push(blameCount);
+        blameCount++;
+        arrayLength++;
     }
-    function deleteBlame(uint256 blameId) public override {
-        require(blameId<=uniqueId,"There is no blame for the id you specified.");
+
+    function deleteBlame(uint256 _blameId) public {
+        require(_blameId<=blameCount,"There is no blame for the id you specified.");
         require( 
-            blameCoin.transferFrom(msg.sender, address(this), (PRICE * (PRICE + (boosts[blameId] * 10**6))) / 5000000),
+            blameCoin.transferFrom(msg.sender, address(this), (PRICE * (PRICE + (boosts[_blameId] * 10**6))) / 5000000),
             "Transaction Error"
         );
-        delete descBlame[blameId];
-        delete users[blameId];
-        delete boosts[blameId];
+        delete descBlame[_blameId];
+        delete users[_blameId];
+        delete boosts[_blameId];
+        blameCount--;
     }
-    function boostBlame(uint256 _blameId, uint256 boostQuantity) public override {
-        require(_blameId<=uniqueId,"There is no blame for the id you specified.");
+
+    function boostBlame(uint256 __blameId) public {
+        require(__blameId<=blameCount-1,"There is no blame for the id you specified.");
         require( 
             blameCoin.transferFrom(msg.sender, address(this), PRICE + 5000000),
             "Transaction Error"
         );
-        boosts[_blameId] = boostQuantity;
+        boosts[__blameId]++;
     }
  }
