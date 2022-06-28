@@ -15,7 +15,14 @@ contract theBlame {
     uint256 public arrayLength;
     uint256 [] boosts;
     uint256 [] blameId;
-     
+
+    error AlreadyClaimed();
+
+    struct Claimer{
+        bool claimed;
+        uint256 earnedCoin;
+    }
+    mapping(address => Claimer) userClaimed;
     function getBlameDetail(uint256 _id) public view returns (string memory, string memory, uint256, uint256) {
         return (users[_id],descBlame[_id], boosts[_id], blameId[_id]);
     }
@@ -34,11 +41,14 @@ contract theBlame {
     }
 
     function deleteBlame(uint256 _blameId) public {
+        Claimer storage user = userClaimed[msg.sender];
+        uint256 lastprice = (PRICE * (PRICE + (boosts[_blameId] * 10**6))) / 5000000;
         require(_blameId<=blameCount,"There is no blame for the id you specified.");
         require( 
-            blameCoin.transferFrom(msg.sender, address(this), (PRICE * (PRICE + (boosts[_blameId] * 10**6))) / 5000000),
+            blameCoin.transferFrom(msg.sender, address(this), lastprice),
             "Transaction Error"
         );
+        user.earnedCoin += lastprice;
         delete descBlame[_blameId];
         delete users[_blameId];
         delete boosts[_blameId];
@@ -52,5 +62,27 @@ contract theBlame {
             "Transaction Error"
         );
         boosts[__blameId]++;
+    }
+
+    function claimBlame() public {
+        Claimer storage user = userClaimed[msg.sender];
+        if(user.claimed==true){
+          revert AlreadyClaimed();
+        }else{
+          require( 
+          blameCoin.transferFrom(address(this), msg.sender, 50000000),
+          "Transaction Error"
+          );
+          user.claimed=true;
+        }
+    }
+
+    function witdhdrawEarnings() public {
+        Claimer storage user = userClaimed[msg.sender];
+        require( 
+          blameCoin.transferFrom(address(this), msg.sender, user.earnedCoin * 10**6),
+          "Transaction Error"
+          );
+        user.earnedCoin = 0;
     }
  }
