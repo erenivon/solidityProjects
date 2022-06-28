@@ -6,13 +6,13 @@ contract theBlame {
     uint256 constant PRICE = 10000000;
     IERC20 private blameCoin; 
 
-    // constructor(address payable tokenAddress) {
-    //     blameCoin = IERC20(tokenAddress); 
-    // }
+    constructor(address payable tokenAddress) {
+        blameCoin = IERC20(tokenAddress); 
+    }
     string [] descBlame;
     string [] users;
     uint256 public blameCount = 0;
-    uint256 public arrayLength;
+    uint256 public arrayLength = 0;
     uint256 [] boosts;
     uint256 [] blameId;
     address[] public blameOwner;
@@ -37,7 +37,7 @@ contract theBlame {
         users.push(userName);
         boosts.push(0);
         blameOwner.push(msg.sender);
-        blameId.push(blameCount);
+        blameId.push(arrayLength);
         blameCount++;
         arrayLength++;
     }
@@ -66,19 +66,6 @@ contract theBlame {
         boosts[__blameId]++;
     }
 
-    function claimBlame() public {
-        Claimer storage user = userClaimed[msg.sender];
-        if(user.claimed==true){
-          revert AlreadyClaimed();
-        }else{
-          require( 
-          blameCoin.transferFrom(address(this), msg.sender, 50000000),
-          "Transaction Error"
-          );
-          user.claimed=true;
-        }
-    }
-
     function witdhdrawEarnings() public {
         Claimer storage user = userClaimed[msg.sender];
         require( 
@@ -87,4 +74,14 @@ contract theBlame {
           );
         user.earnedCoin = 0;
     }
+
+    function claimBlame() public {
+        Claimer storage user = userClaimed[msg.sender];
+        require(!user.claimed,"already cleamed");
+        require( 
+          blameCoin.transferFrom(address(this), msg.sender, user.earnedCoin * 10**6),
+          "Transaction Error"
+        );
+        user.claimed=true;
+    }  
  }
