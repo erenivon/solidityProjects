@@ -6,15 +6,16 @@ contract theBlame {
     uint256 constant PRICE = 10000000;
     IERC20 private blameCoin; 
 
-    constructor(address payable tokenAddress) {
-        blameCoin = IERC20(tokenAddress); 
-    }
+    // constructor(address payable tokenAddress) {
+    //     blameCoin = IERC20(tokenAddress); 
+    // }
     string [] descBlame;
     string [] users;
     uint256 public blameCount = 0;
     uint256 public arrayLength;
     uint256 [] boosts;
     uint256 [] blameId;
+    address[] public blameOwner;
 
     error AlreadyClaimed();
 
@@ -22,7 +23,7 @@ contract theBlame {
         bool claimed;
         uint256 earnedCoin;
     }
-    mapping(address => Claimer) userClaimed;
+    mapping(address => Claimer) public userClaimed;
     function getBlameDetail(uint256 _id) public view returns (string memory, string memory, uint256, uint256) {
         return (users[_id],descBlame[_id], boosts[_id], blameId[_id]);
     }
@@ -35,13 +36,14 @@ contract theBlame {
         descBlame.push(yourBlame);
         users.push(userName);
         boosts.push(0);
+        blameOwner.push(msg.sender);
         blameId.push(blameCount);
         blameCount++;
         arrayLength++;
     }
 
     function deleteBlame(uint256 _blameId) public {
-        Claimer storage user = userClaimed[msg.sender];
+        Claimer storage user = userClaimed[blameOwner[_blameId]];
         uint256 lastprice = (PRICE * (PRICE + (boosts[_blameId] * 10**6))) / 5000000;
         require(_blameId<=blameCount,"There is no blame for the id you specified.");
         require( 
