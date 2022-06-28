@@ -3,12 +3,13 @@ pragma solidity ^0.8.7;
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 contract theBlame {
-    uint256 constant PRICE = 10000000;
     IERC20 private blameCoin; 
 
     constructor(address payable tokenAddress) {
         blameCoin = IERC20(tokenAddress); 
     }
+    
+    uint256 constant PRICE = 10000000;
     string [] descBlame;
     string [] users;
     uint256 public blameCount = 0;
@@ -24,6 +25,7 @@ contract theBlame {
         uint256 earnedCoin;
     }
     mapping(address => Claimer) public userClaimed;
+
     function getBlameDetail(uint256 _id) public view returns (string memory, string memory, uint256, uint256) {
         return (users[_id],descBlame[_id], boosts[_id], blameId[_id]);
     }
@@ -79,7 +81,7 @@ contract theBlame {
         Claimer storage user = userClaimed[msg.sender];
         require(!user.claimed,"already cleamed");
         require( 
-          blameCoin.transferFrom(address(this), msg.sender, user.earnedCoin * 10**6),
+          blameCoin.transferFrom(address(this), msg.sender, 50000000),
           "Transaction Error"
         );
         user.claimed=true;
